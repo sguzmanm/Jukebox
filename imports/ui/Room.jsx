@@ -26,5 +26,5 @@ export default Room = withRouter(
     return {
       links: Links.find().fetch()
     };
-  })(Info)
+  })(Room)
 );
