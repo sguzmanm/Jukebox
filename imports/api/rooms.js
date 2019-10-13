@@ -21,7 +21,7 @@ Meteor.methods({
       name: room.name,
       createdAt: new Date(),
       owner: room.owner,
-      songs:[],
+      songs:room.songs,
       tokenA: room.tokenA,
       tokenB: room.tokenA,
     });

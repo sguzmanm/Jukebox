@@ -1,0 +1,17 @@
+.room{
+  height: 100vh;
+  color: white;
+}
+.title{
+  font-family: 'Alfa Slab One', cursive;
+}
+.table{
+  color: white;
+}
+.list{
+  height: 100vh;
+  overflow: auto;
+}
+#create{
+  color: #b3b3b3;
+}

@@ -1,14 +1,30 @@
 import React, { Component } from 'react';
-
+import "./Song.css";
 export default class Song extends Component {
-
+  renderState()
+  {
+    if(this.props.data.state === "reproduced")
+    {
+      return (<th scope="row">✓</th>)
+    }
+    else if(this.props.data.state === "playing")
+    {
+      return (<th scope="row">▷</th>)
+    }
+    else
+    {
+      return (<th scope="row">→</th>)
+    }
+  }
   render() {
     return (
-      <li>
-        <span >{this.props.data.name}</span>
-        <span >{this.props.data.author}</span>
-        <span >{this.props.data.duration}</span>
-      </li>
+      <tr className={this.props.data.state}>
+        {this.renderState()}
+        <th>{this.props.id}</th>
+        <td>{this.props.data.name}</td>
+        <td>{this.props.data.author}</td>
+        <td>{this.props.data.duration}</td>
+      </tr>
     );
   }
 }
