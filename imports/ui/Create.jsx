@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from "./App";
 
 var querystring = require("query-string");
-var request = require("request");
 
 class Create extends Component {
   constructor(props) {
