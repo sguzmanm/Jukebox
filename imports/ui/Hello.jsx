@@ -8,18 +8,64 @@ export default class Hello extends Component {
     super(props);
     this.state = {
       join: false,
-      playlistId: ""
+      playlistId: "",
+      focus: "join"
     };
+    this.join = React.createRef();
+    this.host = React.createRef();
+    this.inputId = React.createRef();
+    this.joinRm = React.createRef();
+    this.cancel = React.createRef();
   }
 
-  selectJoin = () => {
-    this.setState({ join: true });
-  };
-  cancel = () => {
-    this.setState({ join: false });
+  handleKeyPress = (btn, event) => {
+    if (btn === "join" && (event.key === "ArrowLeft" || event.key === "Tab")) {
+      this.setState({ focus: "host" });
+      this.host.current.focus();
+    } else if (
+      btn === "host" &&
+      (event.key === "ArrowRight" || event.key === "Tab")
+    ) {
+      this.setState({ focus: "join" });
+      this.join.current.focus();
+    } else if (btn === "inputId" && event.key === "Enter") {
+      this.joinClick();
+    } else if (
+      btn === "inputId" &&
+      (event.key === "ArrowDown" || event.key === "Tab")
+    ) {
+      this.setState({ focus: "cancel" });
+      this.cancel.current.focus();
+    } else if (
+      btn === "joinRm" &&
+      (event.key === "ArrowLeft" || event.key === "Tab")
+    ) {
+      this.setState({ focus: "cancel" });
+      this.cancel.current.focus();
+    } else if (
+      btn === "cancel" &&
+      (event.key === "ArrowRight" || event.key === "Tab")
+    ) {
+      this.setState({ focus: "joinRm" });
+      this.joinRm.current.focus();
+    } else if (
+      (btn === "cancel" || btn === "joinRm") &&
+      event.key === "ArrowUp"
+    ) {
+      this.setState({ join: true, focus: "inputId" });
+      this.inputId.current.focus();
+    }
   };
 
-  join = () => {
+  selectJoin = () => {
+    this.setState({ join: true, focus: "inputId" });
+    this.inputId.current.focus();
+  };
+  cancelClick = () => {
+    this.setState({ join: false, focus: "join" });
+  };
+
+  joinClick = () => {
     if (this.state.playlistId != "") {
       window.location.href =
         "http://localhost:3000/rooms/" + this.state.playlistId;
@@ -44,7 +90,12 @@ export default class Hello extends Component {
   render() {
     if (!this.state.join) {
       return (
-        <div className="hello">
+        <div
+          className="hello"
+          onClick={() => {
+            this.join.current.focus();
+          }}
+        >
           <div className="row text-center">
             <div className="col-sm-8 mx-auto">
               <h1 className="h1Nombre">Jukebox</h1>
@@ -53,14 +104,34 @@ export default class Hello extends Component {
           <div className="row text-center">
             <div className="col-sm-3"></div>
             <div className="col-sm-3 colbtn mx-auto">
-              <div className="btn btn-primary" onClick={this.auth}>
+              <button
+                onKeyDown={event => {
+                  this.handleKeyPress("host", event);
+                }}
+                autoFocus={this.state.focus === "host"}
+                className="btn btn-primary"
+                onClick={() => {
+                  this.auth();
+                }}
+                ref={this.host}
+              >
                 Host
-              </div>
+              </button>
             </div>
             <div className="col-sm-3 colbtn mx-auto">
-              <div className="btn btn-primary" onClick={this.selectJoin}>
+              <button
+                autoFocus={this.state.focus === "join"}
+                className="btn btn-primary"
+                ref={this.join}
+                onKeyDown={event => {
+                  this.handleKeyPress("join", event);
+                }}
+                onClick={() => {
+                  this.selectJoin();
+                }}
+              >
                 Join
-              </div>
+              </button>
             </div>
             <div className="col-sm-3"></div>
           </div>
@@ -68,7 +139,12 @@ export default class Hello extends Component {
       );
     } else {
       return (
-        <div className="hello">
+        <div
+          className="hello"
+          onClick={() => {
+            this.inputId.current.focus();
+          }}
+        >
           <div className="row text-center">
             <div className="col-sm-8 mx-auto">
               <h1 className="h1Nombre">Jukebox</h1>
@@ -83,7 +159,12 @@ export default class Hello extends Component {
                 <div className="row text-center">
                   <div className="col-sm-12 mx-auto">
                     <input
+                      ref={this.inputId}
                       type="text"
+                      onKeyDown={event => {
+                        this.handleKeyPress("inputId", event);
+                      }}
+                      autoFocus={this.state.focus === "inputId"}
                       className="form-control createInp "
                       value={this.state.playlistId}
                       onChange={this.actualizarId.bind(this)}
@@ -92,18 +173,38 @@ export default class Hello extends Component {
                 </div>
                 <hr className="hrCreate" />
                 <div className="row text-center">
-                  <div className="col-sm-3"></div>
-                  <div className="col-sm-3 colbtn mx-auto">
-                    <div className="btn btn-primary" onClick={this.cancel}>
+                  <div className="col-sm-2"></div>
+                  <div className="col-sm-4 colbtn mx-auto">
+                    <button
+                      onKeyDown={event => {
+                        this.handleKeyPress("cancel", event);
+                      }}
+                      ref={this.cancel}
+                      autoFocus={this.state.focus === "cancel"}
+                      className="btn btn-primary"
+                      onClick={() => {
+                        this.cancelClick();
+                      }}
+                    >
                       Cancel
-                    </div>
+                    </button>
                   </div>
-                  <div className="col-sm-3 colbtn mx-auto">
-                    <div className="btn btn-primary" onClick={this.join}>
+                  <div className="col-sm-4 colbtn mx-auto">
+                    <button
+                      onKeyDown={event => {
+                        this.handleKeyPress("joinRm", event);
+                      }}
+                      ref={this.joinRm}
+                      autoFocus={this.state.focus === "joinRm"}
+                      className="btn btn-primary"
+                      onClick={() => {
+                        this.joinClick();
+                      }}
+                    >
                       Join
-                    </div>
+                    </button>
                   </div>
-                  <div className="col-sm-3"></div>
+                  <div className="col-sm-2"></div>
                 </div>
               </div>
             </div>
