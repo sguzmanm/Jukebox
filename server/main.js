@@ -1,7 +1,7 @@
 import "/imports/api/rooms";
 
 Meteor.methods({
-  postData(url, headers, details) {
+  postContent(url, headers, details) {
     try {
       var result = HTTP.call("POST", url, {
         content: details,
@@ -16,6 +16,18 @@ Meteor.methods({
   getData(url, headers) {
     try {
       var result = HTTP.call("GET", url, {
+        headers: headers
+      });
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  postData(url, headers, data) {
+    try {
+      var result = HTTP.call("POST", url, {
+        data: data,
         headers: headers
       });
       return result;

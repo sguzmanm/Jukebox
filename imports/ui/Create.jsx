@@ -10,14 +10,37 @@ class Create extends Component {
     this.state = {
       chosen: false,
       favoriteTracks: [],
-      playlistName: ""
+      playlistName: "",
+      refresh_token: null,
+      access_token: null,
+      user: "",
+      newRoom: false,
+      newRoomId: ""
     };
   }
 
+  copyToClipboard = e => {
+    this.textArea.select();
+    document.execCommand("copy");
+    setTimeout(e.target.focus(), 500);
+  };
+
   savePlaylistName = () => {
-    this.setState({
-      chosen: true
-    });
+    if (this.state.playlistName != "") {
+      this.setState({
+        chosen: true
+      });
+    }
+  };
+
+  getRoomLink = () => {
+    if (this.state.newRoomId != "") {
+      return "http://localhost:3000/rooms/" + this.state.newRoomId;
+    }
+  };
+
+  goToRoom = () => {
+    window.location.href = this.getRoomLink();
   };
 
   actualizarNombre = e => {
@@ -50,7 +73,7 @@ class Create extends Component {
       formBody = formBody.join("&");
 
       Meteor.call(
-        "postData",
+        "postContent",
         "https://accounts.spotify.com/api/token",
         headers,
         formBody,
@@ -58,8 +81,22 @@ class Create extends Component {
           if (error) {
             this.props.history.push("/");
           } else {
-            console.log(result);
-            //Se guardan result.data.access_token y result.data.refresh_token
+            this.setState({
+              access_token: result.data.access_token,
+              refresh_token: result.data.refresh_token
+            });
+            Meteor.call(
+              "getData",
+              "https://api.spotify.com/v1/me",
+              { Authorization: "Bearer " + result.data.access_token },
+              (error, result) => {
+                if (error) {
+                  this.props.history.push("/");
+                } else {
+                  this.setState({ user: result.data.id });
+                }
+              }
+            );
 
             Meteor.call(
               "getData",
@@ -69,7 +106,6 @@ class Create extends Component {
                 if (error) {
                   this.props.history.push("/");
                 } else {
-                  console.log(result);
                   this.setState({ favoriteTracks: result.data.items });
                 }
               }
@@ -79,8 +115,51 @@ class Create extends Component {
       );
     }
   }
+
   firstSong = track => {
-    console.log(track);
+    if (this.state.access_token !== null && this.state.user != "") {
+      Meteor.call(
+        "postData",
+        "https://api.spotify.com/v1/users/" + this.state.user + "/playlists",
+        {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.state.access_token
+        },
+        {
+          name: this.state.playlistName,
+          description: "A Jukebox room",
+          public: false
+        },
+        (error, result) => {
+          if (error) {
+            this.props.history.push("/");
+          } else {
+            Meteor.call(
+              "postData",
+              "https://api.spotify.com/v1/playlists/" +
+                result.data.id +
+                "/tracks",
+              {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + this.state.access_token
+              },
+              {
+                uris: [track.uri]
+              },
+              (error, result) => {
+                if (error) {
+                  this.props.history.push("/");
+                } else {
+                  id = generateRandomString(6);
+                  this.setState({ newRoom: true, newRoomId: id });
+                  //Aqui se hace el resto de meteor
+                }
+              }
+            );
+          }
+        }
+      );
+    }
   };
 
   _renderCol = track => {
@@ -143,7 +222,66 @@ class Create extends Component {
   };
   //Input para playlist. Con esta info pedir los mas visualizados.
   render() {
-    if (!this.state.chosen) {
+    if (!this.state.newRoom) {
+      if (!this.state.chosen) {
+        return (
+          <div className="hello">
+            <div className="row text-center">
+              <div className="col-sm-8 mx-auto">
+                <h1 className="h1Nombre">Jukebox</h1>
+              </div>
+            </div>
+            <div className="row text-center">
+              <div className="col-sm-5 mx-auto">
+                <div className="inputCol2">
+                  <div className="row text-center">
+                    <div className="InputLbl">Name the room:</div>
+                  </div>
+                  <div className="row text-center">
+                    <div className="col-sm-12 mx-auto">
+                      <input
+                        type="text"
+                        className="form-control createInp "
+                        value={this.state.playlistName}
+                        onChange={this.actualizarNombre.bind(this)}
+                      />
+                    </div>
+                  </div>
+                  <hr className="hrCreate" />
+                  <div className="row text-center filaJoin">
+                    {document.queryCommandSupported("copy") && (
+                      <button
+                        type="button"
+                        className="btn btn-primary mx-auto btnSavePlaylist"
+                        onClick={this.savePlaylistName}
+                      >
+                        Create
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      } else {
+        if (this.state.favoriteTracks.length === 16) {
+          return (
+            <div className="hello">
+              <div className="row text-center">
+                <h1 className="filanombre">Select your first track:</h1>
+              </div>
+              <div className="container">
+                {this._renderRow(this.state.favoriteTracks.slice(0, 4))}
+                {this._renderRow(this.state.favoriteTracks.slice(4, 8))}
+                {this._renderRow(this.state.favoriteTracks.slice(8, 12))}
+                {this._renderRow(this.state.favoriteTracks.slice(12, 16))}
+              </div>
+            </div>
+          );
+        }
+      }
+    } else {
       return (
         <div className="hello">
           <div className="row text-center">
@@ -153,53 +291,63 @@ class Create extends Component {
           </div>
           <div className="row text-center">
             <div className="col-sm-5 mx-auto">
-              <div className="inputCol2">
+              <div className="inputCol2 rmS">
                 <div className="row text-center">
-                  <div className="InputLbl">Name the room:</div>
+                  <div className="InputLbl">Room Created Succesfully!</div>
                 </div>
-                <div className="row text-center">
-                  <div className="col-sm-12 mx-auto">
-                    <input
-                      type="text"
-                      className="form-control createInp "
-                      value={this.state.playlistName}
-                      onChange={this.actualizarNombre.bind(this)}
-                    />
-                  </div>
-                </div>
-                <hr className="hrCreate" />
-                <div className="row text-center filaJoin">
+              </div>
+            </div>
+          </div>
+          <div className="row text-center">
+            <div className="col-sm-8 text-center mx-auto">
+              <div className="row text-center">
+                <div className="mx-auto my-auto">
+                  <textarea
+                    ref={textarea => (this.textArea = textarea)}
+                    className="createInp lblTxtArea"
+                    rows="1"
+                    cols={this.getRoomLink().length}
+                    value={this.getRoomLink()}
+                    readOnly
+                  />
                   <button
-                    type="button"
-                    className="btn btn-primary mx-auto btnSavePlaylist"
-                    onClick={this.savePlaylistName}
+                    className="copyText"
+                    onClick={this.copyToClipboard.bind(this)}
                   >
-                    Create
+                    <i className="far fa-copy"></i>
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      );
-    } else {
-      if (this.state.favoriteTracks.length === 16) {
-        return (
-          <div className="hello">
-            <div className="row text-center">
-              <h1 className="filanombre">Select your first track:</h1>
-            </div>
-            <div className="container">
-              {this._renderRow(this.state.favoriteTracks.slice(0, 4))}
-              {this._renderRow(this.state.favoriteTracks.slice(4, 8))}
-              {this._renderRow(this.state.favoriteTracks.slice(8, 12))}
-              {this._renderRow(this.state.favoriteTracks.slice(12, 16))}
+          <div className="row text-center">
+            <div className="col-sm-12 mx-auto">
+              <div className="row text-center mx-auto">
+                <button
+                  type="button"
+                  className="btn btn-primary mx-auto btnSavePlaylist"
+                  onClick={this.goToRoom}
+                >
+                  Go to the room
+                </button>
+              </div>
             </div>
           </div>
-        );
-      }
+        </div>
+      );
     }
   }
 }
 
 export default withRouter(Create);
+
+var generateRandomString = function(length) {
+  var text = "";
+  var possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
