@@ -139,20 +139,7 @@
   -webkit-transition-duration: 0;
   transition-duration: 0;
 }
-.btn-primary {
-  color: #fff;
-  background-color: #1db954;
-}
-.btn-primary:hover {
-  color: #fff;
-  background-color: #4ac776;
-}
-.btn-primary:focus {
-  color: #fff;
-  background-color: #179443;
-  -webkit-box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) inset;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) inset;
-}
+
 .btn-primary:active,
 .btn-primary:active:hover {
   background-color: #179443;
@@ -173,8 +160,8 @@
 .btn-primary:focus {
   color: #fff;
   background-color: #1aa34a;
-  -webkit-box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) inset;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) inset;
+  -webkit-box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8) inset;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8) inset;
 }
 .btn-primary:active,
 .btn-primary:active:hover {
