@@ -19,33 +19,21 @@ export default class Hello extends Component {
   }
 
   handleKeyPress = (btn, event) => {
-    if (btn === "join" && (event.key === "ArrowLeft" || event.key === "Tab")) {
+    if (btn === "join" && event.key === "ArrowLeft") {
       this.setState({ focus: "host" });
       this.host.current.focus();
-    } else if (
-      btn === "host" &&
-      (event.key === "ArrowRight" || event.key === "Tab")
-    ) {
+    } else if (btn === "host" && event.key === "ArrowRight") {
       this.setState({ focus: "join" });
       this.join.current.focus();
     } else if (btn === "inputId" && event.key === "Enter") {
       this.joinClick();
-    } else if (
-      btn === "inputId" &&
-      (event.key === "ArrowDown" || event.key === "Tab")
-    ) {
+    } else if (btn === "inputId" && event.key === "ArrowDown") {
       this.setState({ focus: "cancel" });
       this.cancel.current.focus();
-    } else if (
-      btn === "joinRm" &&
-      (event.key === "ArrowLeft" || event.key === "Tab")
-    ) {
+    } else if (btn === "joinRm" && event.key === "ArrowLeft") {
       this.setState({ focus: "cancel" });
       this.cancel.current.focus();
-    } else if (
-      btn === "cancel" &&
-      (event.key === "ArrowRight" || event.key === "Tab")
-    ) {
+    } else if (btn === "cancel" && event.key === "ArrowRight") {
       this.setState({ focus: "joinRm" });
       this.joinRm.current.focus();
     } else if (
