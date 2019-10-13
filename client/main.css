@@ -1,4 +1,17 @@
 body {
-  padding: 12px;
-  font-family: sans-serif;
+  font-family: "Montserrat", sans-serif;
+}
+.cascara {
+  background-color: #191414;
+}
+.containerfluid {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
