@@ -5,6 +5,7 @@ import Rooms from "../api/rooms";
 import { withRouter } from "react-router-dom";
 import Song from './Song.jsx';
 import "./Room.css";
+import NotFound from "./NotFound.jsx";
 
 class Room extends Component {
   constructor(props) {
@@ -32,32 +33,20 @@ class Room extends Component {
     }
   }
 
-  sendRoom () {
-    let song = {
-      name:"Marinela",
-      author:"Ska-p",
-      duration:"4:25",
-      state:"comming"
-    }
-    let room = {
-      name : "La playlist aleta",
-      owner: "nicolas3746",
-      songs: [song],
-      tokenA: "asnfdjasnfosaf",
-      tokenB: "dfsafagfafqefef"
-    }
-    Meteor.call('rooms.insert', room, (error,result) => {console.log(result)});
-  }
-
   addSong = () => {
+    let rooms = this.props.room;
     let song = {
       name:"Marinela",
       author:"Ska-p",
       duration:"4:25",
       state:"comming"
     }
-    let roomId = this.state.id
-    Meteor.call('rooms.addSong',roomId, song);
+    let keys = 0;
+    if(rooms.length != 0)
+    {
+      let roomId = rooms[0]._id
+      Meteor.call('rooms.addSong',roomId, song);
+    }
   }
   renderRoomDescription = () =>{
     let rooms = this.props.room;
@@ -66,7 +55,6 @@ class Room extends Component {
     {
       let current_datetime = rooms[0].createdAt
       let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
-      console.log(formatted_date)
       return(
         <div>
           <h5>Jukebox</h5>
@@ -76,23 +64,16 @@ class Room extends Component {
         </div>
       )
     }
-    else{
-      return(
-        <h1>No existe un room asociado a: {this.state.id}</h1>
-      )
-    }
   }
   render() {
+    if(this.props.room === undefined || this.props.room.length === 0)
+    {
+      return (<NotFound/>)
+    }
     return (
       <div className="room row">
-        <div class="col-sm-4">
+        <div className="col-sm-4">
           <h1>Search Bar</h1>
-          <button
-           className="btn btn-primary mx-auto"
-            onClick={this.sendRoom}
-          >
-            Create Room
-          </button>
           <button
             className="btn btn-primary mx-auto"
             onClick={this.addSong}
@@ -125,9 +106,8 @@ class Room extends Component {
 export default Room = withRouter(
   withTracker( props => {
     Meteor.subscribe('rooms');
-
     return {
-      room: Rooms.find({ _id: props.match.params.id }).fetch()
+      room: Rooms.find({ roomId: props.match.params.id }).fetch()
     };
   })(Room)
 );

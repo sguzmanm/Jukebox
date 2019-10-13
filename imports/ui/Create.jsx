@@ -46,7 +46,44 @@ class Create extends Component {
   actualizarNombre = e => {
     this.setState({ playlistName: e.target.value });
   };
-
+  persistRoom = (track) => {
+    let id = generateRandomString(6);
+    Meteor.call('rooms.checkId', id, (error,result) => {
+      if(result === undefined)
+      {
+        let minutes = Math.trunc((track.duration_ms/1000)/60);
+        let seconds = Math.trunc((track.duration_ms/1000)%60);
+        let authors = "";
+        for (const index in track.artists){
+          authors = authors + track.artists[index].name
+          if(index!=track.artists.length-1)
+          {
+            authors = authors + ", "
+          }
+        }
+        //Aqui se hace el resto de meteor
+        let song = {
+          name:track.name,
+          author:authors,
+          duration:minutes+":"+seconds,
+          state:"comming"
+        }
+        let room = {
+          roomId: id,
+          name : this.state.playlistName,
+          owner: this.state.user,
+          songs: [song],
+          refresh_token: this.state.refresh_token,
+          access_token: this.state.access_token
+        }
+        Meteor.call('rooms.insert', room);
+        this.setState({ newRoom: true, newRoomId: id });
+      }
+      else{
+        this.persistRoom(track);
+      }
+    });
+  }
   componentDidMount() {
     const parsed = querystring.parse(location.search);
     if (parsed.code === undefined) {
@@ -150,9 +187,7 @@ class Create extends Component {
                 if (error) {
                   this.props.history.push("/");
                 } else {
-                  id = generateRandomString(6);
-                  this.setState({ newRoom: true, newRoomId: id });
-                  //Aqui se hace el resto de meteor
+                  this.persistRoom(track)
                 }
               }
             );
