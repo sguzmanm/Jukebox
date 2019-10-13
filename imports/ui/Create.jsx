@@ -79,9 +79,9 @@ class Create extends Component {
       );
     }
   }
-  firstSong=(track)=> {
-    console.log(track)
-  }
+  firstSong = track => {
+    console.log(track);
+  };
 
   _renderCol = track => {
     let audio = new Audio(track.preview_url);
@@ -99,7 +99,9 @@ class Create extends Component {
       <div className="col-sm-3 colpic">
         <div
           className="pic mx-auto"
-          onClick={this.firstSong(track)}
+          onClick={() => {
+            this.firstSong(track);
+          }}
           onMouseLeave={() => {
             if (timeoutId) {
               clearTimeout(timeoutId);

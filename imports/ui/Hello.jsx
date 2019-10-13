@@ -15,10 +15,15 @@ export default class Hello extends Component {
   selectJoin = () => {
     this.setState({ join: true });
   };
+  cancel = () => {
+    this.setState({ join: false });
+  };
 
   join = () => {
-    window.location.href =
-      "https://localhost:3000/rooms/" + this.state.playlistId;
+    if (this.state.playlistId != "") {
+      window.location.href =
+        "http://localhost:3000/rooms/" + this.state.playlistId;
+    }
   };
 
   actualizarId = e => {
@@ -70,25 +75,35 @@ export default class Hello extends Component {
             </div>
           </div>
           <div className="row text-center">
-            <div className="col-sm-5 colInput mx-auto">
-              <div className="inputCol">
+            <div className="col-sm-5 mx-auto">
+              <div className="inputCol2">
                 <div className="row text-center">
                   <div className="InputLbl">Enter the room's ID:</div>
                 </div>
                 <div className="row text-center">
-                  <div className="col-sm-8 mx-auto">
+                  <div className="col-sm-12 mx-auto">
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control createInp "
                       value={this.state.playlistId}
                       onChange={this.actualizarId.bind(this)}
                     />
                   </div>
                 </div>
-                <div className="row text-center filaJoin">
-                  <div className="btn btn-primary mx-auto" onClick={this.join}>
-                    Join
+                <hr className="hrCreate" />
+                <div className="row text-center">
+                  <div className="col-sm-3"></div>
+                  <div className="col-sm-3 colbtn mx-auto">
+                    <div className="btn btn-primary" onClick={this.cancel}>
+                      Cancel
+                    </div>
                   </div>
+                  <div className="col-sm-3 colbtn mx-auto">
+                    <div className="btn btn-primary" onClick={this.join}>
+                      Join
+                    </div>
+                  </div>
+                  <div className="col-sm-3"></div>
                 </div>
               </div>
             </div>

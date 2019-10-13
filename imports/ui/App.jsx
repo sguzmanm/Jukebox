@@ -3,7 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import Hello from "./Hello.jsx";
 import Room from "./Room.jsx";
 import Create from "./Create.jsx";
-
+import NotFound from "./NotFound.jsx";
 
 export const SCOPE =
   "user-read-private user-read-email user-read-currently-playing user-read-playback-state playlist-modify-public playlist-modify-private playlist-read-private user-top-read";
@@ -22,6 +22,7 @@ class App extends React.Component {
           <Route exact path="/" render={() => <Hello />} />
           <Route path="/create" render={() => <Create />} />
           <Route path="/rooms/:id" render={() => <Room />} />
+          <Route path="/notfound" render={() => <NotFound />} />
         </Switch>
       </div>
     );
