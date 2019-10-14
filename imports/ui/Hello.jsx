@@ -78,15 +78,17 @@ export default class Hello extends Component {
   render() {
     if (!this.state.join) {
       return (
-        <div
-          className="hello"
-          onClick={() => {
-            this.join.current.focus();
-          }}
-        >
+        <div className="hello">
           <div className="row text-center">
             <div className="col-sm-8 mx-auto">
-              <h1 className="h1Nombre">Jukebox</h1>
+              <h1
+                className="h1Nombre"
+                onClick={() => {
+                  this.join.current.focus();
+                }}
+              >
+                Jukebox
+              </h1>
             </div>
           </div>
           <div className="row text-center">
@@ -126,15 +128,17 @@ export default class Hello extends Component {
       );
     } else {
       return (
-        <div
-          className="hello"
-          onClick={() => {
-            this.inputId.current.focus();
-          }}
-        >
+        <div className="hello">
           <div className="row text-center">
             <div className="col-sm-8 mx-auto">
-              <h1 className="h1Nombre">Jukebox</h1>
+              <h1
+                className="h1Nombre"
+                onClick={() => {
+                  this.inputId.current.focus();
+                }}
+              >
+                Jukebox
+              </h1>
             </div>
           </div>
           <div className="row text-center">
