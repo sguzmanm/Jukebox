@@ -36,6 +36,7 @@ class Room extends Component {
     let filteredSongs = this.props.room;
     let keys = 0;
     if (filteredSongs.length != 0) {
+      // sguzmanm: You can get the index by using songs.map((actual,index)=>{})
       return filteredSongs[0].songs.map(actual => {
         keys += 1;
         return <Song key={keys} id={keys} data={actual} />;
@@ -73,6 +74,7 @@ class Room extends Component {
 
   checkPlaylist = () => {
     let rooms = this.props.room;
+    // sguzmanm: You can make an early return here
     if (rooms.length != 0) {
       let room = rooms[0];
       Meteor.call(
@@ -146,6 +148,7 @@ class Room extends Component {
 
   refreshToken = callBack => {
     let rooms = this.props.room;
+    // sguzmanm: You can make an early return here
     if (rooms.length != 0) {
       let refresh_token = rooms[0].refresh_token;
       var headers = {
@@ -240,6 +243,7 @@ class Room extends Component {
     });
   };
 
+  // sguzmanm: I suggest you name this differently, the underscore is confusing rather than differentiating from the react render method
   _render = () => {
     const { value, suggestions, isLoading } = this.state;
     const inputProps = {
