@@ -3,6 +3,7 @@ import "./Song.css";
 export default class Song extends Component {
   renderState()
   {
+    // sguzmanm: I recommend using constants for every state
     if(this.props.data.state === "reproduced")
     {
       return (<th scope="row">✓</th>);
