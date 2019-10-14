@@ -56,7 +56,7 @@ export default class Hello extends Component {
   joinClick = () => {
     if (this.state.playlistId != "") {
       window.location.href =
-        "https://spojuke.herokuapp.com/rooms/" + this.state.playlistId;
+        "http://localhost:3000/rooms/" + this.state.playlistId;
     }
   };
 
