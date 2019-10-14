@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import "./btn.css";
 export default class NotFound extends Component {
   cancel = () => {
-    window.location.href = "http://localhost:3000/";
+    window.location.href = "https://spojuke.herokuapp.com/";
   };
 
   render() {

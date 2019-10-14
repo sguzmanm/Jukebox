@@ -61,7 +61,7 @@ class Create extends Component {
 
   getRoomLink = () => {
     if (this.state.newRoomId != "") {
-      return "http://localhost:3000/rooms/" + this.state.newRoomId;
+      return "https://spojuke.herokuapp.com/rooms/" + this.state.newRoomId;
     }
   };
 
