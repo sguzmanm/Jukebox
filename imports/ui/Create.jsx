@@ -24,8 +24,6 @@ class Create extends Component {
   }
 
   handleKey = (btn, event) => {
-    console.log(btn);
-    console.log(event.key);
     if (btn === "inPlay" && event.key === "ArrowDown") {
       this.btnSave.current.focus();
     } else if (btn === "inPlay" && event.key === "Enter") {
