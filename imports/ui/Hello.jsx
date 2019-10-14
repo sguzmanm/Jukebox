@@ -96,7 +96,6 @@ export default class Hello extends Component {
                 onKeyDown={event => {
                   this.handleKeyPress("host", event);
                 }}
-                autoFocus={this.state.focus === "host"}
                 className="btn btn-primary"
                 onClick={() => {
                   this.auth();
@@ -108,7 +107,7 @@ export default class Hello extends Component {
             </div>
             <div className="col-sm-3 colbtn mx-auto">
               <button
-                autoFocus={this.state.focus === "join"}
+                autoFocus
                 className="btn btn-primary"
                 ref={this.join}
                 onKeyDown={event => {
@@ -149,10 +148,10 @@ export default class Hello extends Component {
                     <input
                       ref={this.inputId}
                       type="text"
+                      autoFocus
                       onKeyDown={event => {
                         this.handleKeyPress("inputId", event);
                       }}
-                      autoFocus={this.state.focus === "inputId"}
                       className="form-control createInp "
                       value={this.state.playlistId}
                       onChange={this.actualizarId.bind(this)}
@@ -168,7 +167,6 @@ export default class Hello extends Component {
                         this.handleKeyPress("cancel", event);
                       }}
                       ref={this.cancel}
-                      autoFocus={this.state.focus === "cancel"}
                       className="btn btn-primary"
                       onClick={() => {
                         this.cancelClick();
@@ -183,7 +181,6 @@ export default class Hello extends Component {
                         this.handleKeyPress("joinRm", event);
                       }}
                       ref={this.joinRm}
-                      autoFocus={this.state.focus === "joinRm"}
                       className="btn btn-primary"
                       onClick={() => {
                         this.joinClick();
