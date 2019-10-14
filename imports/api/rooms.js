@@ -11,26 +11,35 @@ if (Meteor.isServer) {
 }
 Meteor.methods({
   "rooms.addSong"(roomId, song) {
-    const room = Rooms.findOne(roomId);
+    const room = Rooms.findOne({ roomId: roomId });
     const songs = room.songs;
     songs.push(song);
+    Rooms.update(room._id, { $set: { songs: songs } });
+  },
+  "rooms.updateSongs"(roomId, songs) {
     Rooms.update(roomId, { $set: { songs: songs } });
+  },
+  "rooms.updateAccess"(roomId, access_token) {
+    Rooms.update(roomId, { $set: { access_token: access_token } });
   },
   "rooms.insert"(room) {
     Rooms.insert({
       name: room.name,
+      playlistId: room.playlistId,
       createdAt: new Date(),
       owner: room.owner,
-      songs:room.songs,
+      songs: room.songs,
       refresh_token: room.refresh_token,
       access_token: room.access_token,
       roomId: room.roomId
     });
   },
-  "rooms.checkId"(id) {
-    var result = Rooms.findOne({roomId: id});
-    return result;
+  "rooms.delete"(id) {
+    Rooms.remove({ roomId: id });
   },
-
+  "rooms.checkId"(id) {
+    var result = Rooms.findOne({ roomId: id });
+    return result;
+  }
 });
 export default Rooms;

@@ -11,6 +11,7 @@ class Create extends Component {
       chosen: false,
       favoriteTracks: [],
       playlistName: "",
+      playlistId: "",
       refresh_token: null,
       access_token: null,
       user: "",
@@ -165,6 +166,7 @@ class Create extends Component {
         let room = {
           roomId: id,
           name: this.state.playlistName,
+          playlistId: this.state.playlistId,
           owner: this.state.user,
           songs: [song],
           refresh_token: this.state.refresh_token,
@@ -196,6 +198,7 @@ class Create extends Component {
           if (error) {
             this.props.history.push("/");
           } else {
+            this.setState({ playlistId: result.data.id });
             Meteor.call(
               "postData",
               "https://api.spotify.com/v1/playlists/" +
@@ -211,7 +214,7 @@ class Create extends Component {
               (error, result) => {
                 if (error) {
                   this.props.history.push("/");
-                } else {
+                } else if (result !== undefined) {
                   this.persistRoom(track);
                 }
               }
@@ -241,7 +244,6 @@ class Create extends Component {
           ref={ref}
           autoFocus={x === 0 && y === 0}
           onKeyDown={event => {
-            console.log(playing);
             if (event.key == "Control") {
               if (!playing) {
                 playing = true;
@@ -266,11 +268,11 @@ class Create extends Component {
                 clearTimeout(timeoutId);
                 timeoutId = null;
               } else {
-                audio.pause();
+                audio =null;
                 playing = false;
               }
             } catch (e) {
-              console.log(e);
+              console.error(e);
             }
           }}
           onMouseLeave={() => {
