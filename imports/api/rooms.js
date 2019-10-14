@@ -22,10 +22,14 @@ Meteor.methods({
       createdAt: new Date(),
       owner: room.owner,
       songs:room.songs,
-      tokenA: room.tokenA,
-      tokenB: room.tokenA,
+      refresh_token: room.refresh_token,
+      access_token: room.access_token,
+      roomId: room.roomId
     });
-    return id
+  },
+  'rooms.checkId'(id) {
+    var result = Rooms.findOne({roomId: id});
+    return result
   },
 
 });
