@@ -9,8 +9,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.3.4",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
     "history": "^4.10.1",
     "meteor-node-stubs": "^0.4.1",
+    "prettier": "^1.18.2",
     "query-string": "^6.8.3",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
@@ -22,5 +26,8 @@
       "server": "server/main.js"
     },
     "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "eslint-plugin-react": "^7.16.0"
   }
 }
