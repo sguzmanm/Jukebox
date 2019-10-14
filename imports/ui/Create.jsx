@@ -67,6 +67,7 @@ class Create extends Component {
   };
 
   goToRoom = () => {
+    // sguzmanm; I consider that is better to use react-router dom default redirects in roder to keep the behaviour of an SPA. When you do this, you re render the web page several times over
     window.location.href = this.getRoomLink();
   };
 
@@ -77,8 +78,9 @@ class Create extends Component {
   componentDidMount() {
     const parsed = querystring.parse(location.search);
     if (parsed.code === undefined) {
-      this.props.history.push("/");
+      this.props.history.push("/");     // sguzmanm; I consider this can be used for the goToRoom method
     } else {
+      // sguzmanm: I recommend using let instead of var, because we are with ES6 standards
       var headers = {
         "Content-Type": "application/x-www-form-urlencoded"
       };
@@ -93,12 +95,14 @@ class Create extends Component {
 
       var formBody = [];
       for (var property in details) {
+        // sguzmanm: Is it necessary to encode both properties apart from each other?
         var encodedKey = encodeURIComponent(property);
         var encodedValue = encodeURIComponent(details[property]);
         formBody.push(encodedKey + "=" + encodedValue);
       }
       formBody = formBody.join("&");
 
+      // sguzmanm: This call is too long, I recommend to divide it in fewer methods
       Meteor.call(
         "postContent",
         "https://accounts.spotify.com/api/token",
@@ -125,6 +129,7 @@ class Create extends Component {
               }
             );
 
+            // sguzmanm: Why 16?
             Meteor.call(
               "getData",
               "https://api.spotify.com/v1/me/top/tracks?limit=16",
@@ -144,7 +149,9 @@ class Create extends Component {
   }
 
   persistRoom = track => {
+    // sguzmanm: Isn´t mongodb default id enough?
     let id = generateRandomString(6);
+    // sguzmanm: Upsert could have fulfilled these needs...
     Meteor.call("rooms.checkId", id, (error, result) => {
       if (result === undefined) {
         let minutes = Math.trunc(track.duration_ms / 1000 / 60);
@@ -181,6 +188,7 @@ class Create extends Component {
   };
 
   firstSong = track => {
+    // sguzmanm: It is better to make an early return here, for code readability
     if (this.state.access_token !== null && this.state.user != "") {
       Meteor.call(
         "postData",
