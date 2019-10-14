@@ -25,6 +25,8 @@ Meteor.methods({
     return result;
   }
 });
+
+// sguzmanm: For what is this?
 Meteor.startup(function() {
   /*global WebApp*/
   WebApp.addHtmlAttributeHook(function() {
