@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from "./App";
-
+import { Meteor } from "meteor/meteor";
 var querystring = require("query-string");
 import "./create.css";
 class Create extends Component {
@@ -269,7 +269,9 @@ class Create extends Component {
                 audio.pause();
                 playing = false;
               }
-            } catch (e) {}
+            } catch (e) {
+              console.log(e);
+            }
           }}
           onMouseLeave={() => {
             if (timeoutId) {

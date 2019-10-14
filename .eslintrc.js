@@ -41,6 +41,7 @@ module.exports = {
             "error",
             "always"
         ],
-        "react/prop-types": 0
+        "react/prop-types": 0,
+        "no-class-assign": 0
     }
 };
