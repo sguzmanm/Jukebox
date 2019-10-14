@@ -1,6 +1,7 @@
 import { Mongo } from "meteor/mongo";
 import { Meteor } from "meteor/meteor";
 
+// sguzmanm: Love how clean this code is, nice job
 let Rooms = new Mongo.Collection("rooms");
 if (Meteor.isServer) {
   // This code only runs on the server
