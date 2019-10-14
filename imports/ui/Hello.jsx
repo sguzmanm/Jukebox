@@ -18,6 +18,7 @@ export default class Hello extends Component {
     this.cancel = React.createRef();
   }
 
+  // sguzmanm: This method is too big and hard to understand, it should have comments and be segmented into more than one function, e.g., one for handling each type of btn.
   handleKeyPress = (btn, event) => {
     if (btn === "join" && event.key === "ArrowLeft") {
       this.setState({ focus: "host" });
