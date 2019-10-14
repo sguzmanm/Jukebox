@@ -16,3 +16,4 @@ Meteor.startup(() => {
     document.getElementById("root")
   );
 });
+

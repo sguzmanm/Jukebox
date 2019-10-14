@@ -78,7 +78,7 @@ export default class Hello extends Component {
   render() {
     if (!this.state.join) {
       return (
-        <div className="hello">
+        <div className="hello" role="main">
           <div className="row text-center">
             <div className="col-sm-8 mx-auto">
               <h1
@@ -128,7 +128,7 @@ export default class Hello extends Component {
       );
     } else {
       return (
-        <div className="hello">
+        <div className="hello" role="main">
           <div className="row text-center">
             <div className="col-sm-8 mx-auto">
               <h1
@@ -145,7 +145,7 @@ export default class Hello extends Component {
             <div className="col-sm-5 mx-auto">
               <div className="inputCol2">
                 <div className="row text-center">
-                  <div className="InputLbl">Enter the room&apos;s ID:</div>
+                  <div className="InputLbl"><label htmlFor="EnterRoom">Enter the room&apos;s ID:</label></div>
                 </div>
                 <div className="row text-center">
                   <div className="col-sm-12 mx-auto">
@@ -157,6 +157,7 @@ export default class Hello extends Component {
                         this.handleKeyPress("inputId", event);
                       }}
                       className="form-control createInp "
+                      id="EnterRoom"
                       value={this.state.playlistId}
                       onChange={this.actualizarId.bind(this)}
                     />

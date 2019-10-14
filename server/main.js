@@ -25,3 +25,11 @@ Meteor.methods({
     return result;
   }
 });
+Meteor.startup(function() {
+  /*global WebApp*/
+  WebApp.addHtmlAttributeHook(function() {
+    return {
+      "lang": "en"
+    };
+  });
+});
