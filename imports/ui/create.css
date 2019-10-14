@@ -31,6 +31,12 @@
   background-color: #535353;
   margin: 2.5%;
   overflow: hidden;
+  border: none;
+}
+
+.pic:focus {
+  -webkit-box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8) inset;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8) inset;
 }
 
 .filanombre {

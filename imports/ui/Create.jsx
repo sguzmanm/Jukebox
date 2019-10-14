@@ -17,7 +17,35 @@ class Create extends Component {
       newRoom: false,
       newRoomId: ""
     };
+
+    this.btnSave = React.createRef();
+    this.inPlay = React.createRef();
+    this.refMatrix = [];
   }
+
+  handleKey = (btn, event) => {
+    console.log(btn);
+    console.log(event.key);
+    if (btn === "inPlay" && event.key === "ArrowDown") {
+      this.btnSave.current.focus();
+    } else if (btn === "inPlay" && event.key === "Enter") {
+      this.btnSave.current.focus();
+    } else if (btn === "btnSave" && event.key === "ArrowUp") {
+      this.inPlay.current.focus();
+    }
+  };
+
+  handleMatrix = (x, y, event) => {
+    if (event.key === "ArrowUp" && y !== 0) {
+      this.refMatrix[y - 1][x].current.focus();
+    } else if (event.key === "ArrowDown" && y !== 3) {
+      this.refMatrix[y + 1][x].current.focus();
+    } else if (event.key === "ArrowLeft" && x !== 0) {
+      this.refMatrix[y][x - 1].current.focus();
+    } else if (event.key === "ArrowRight" && x !== 3) {
+      this.refMatrix[y][x + 1].current.focus();
+    }
+  };
 
   copyToClipboard = e => {
     this.textArea.select();
@@ -46,44 +74,7 @@ class Create extends Component {
   actualizarNombre = e => {
     this.setState({ playlistName: e.target.value });
   };
-  persistRoom = (track) => {
-    let id = generateRandomString(6);
-    Meteor.call('rooms.checkId', id, (error,result) => {
-      if(result === undefined)
-      {
-        let minutes = Math.trunc((track.duration_ms/1000)/60);
-        let seconds = Math.trunc((track.duration_ms/1000)%60);
-        let authors = "";
-        for (const index in track.artists){
-          authors = authors + track.artists[index].name
-          if(index!=track.artists.length-1)
-          {
-            authors = authors + ", "
-          }
-        }
-        //Aqui se hace el resto de meteor
-        let song = {
-          name:track.name,
-          author:authors,
-          duration:minutes+":"+seconds,
-          state:"comming"
-        }
-        let room = {
-          roomId: id,
-          name : this.state.playlistName,
-          owner: this.state.user,
-          songs: [song],
-          refresh_token: this.state.refresh_token,
-          access_token: this.state.access_token
-        }
-        Meteor.call('rooms.insert', room);
-        this.setState({ newRoom: true, newRoomId: id });
-      }
-      else{
-        this.persistRoom(track);
-      }
-    });
-  }
+
   componentDidMount() {
     const parsed = querystring.parse(location.search);
     if (parsed.code === undefined) {
@@ -153,6 +144,42 @@ class Create extends Component {
     }
   }
 
+  persistRoom = track => {
+    let id = generateRandomString(6);
+    Meteor.call("rooms.checkId", id, (error, result) => {
+      if (result === undefined) {
+        let minutes = Math.trunc(track.duration_ms / 1000 / 60);
+        let seconds = Math.trunc((track.duration_ms / 1000) % 60);
+        let authors = "";
+        for (const index in track.artists) {
+          authors = authors + track.artists[index].name;
+          if (index != track.artists.length - 1) {
+            authors = authors + ", ";
+          }
+        }
+        //Aqui se hace el resto de meteor
+        let song = {
+          name: track.name,
+          author: authors,
+          duration: minutes + ":" + seconds,
+          state: "comming"
+        };
+        let room = {
+          roomId: id,
+          name: this.state.playlistName,
+          owner: this.state.user,
+          songs: [song],
+          refresh_token: this.state.refresh_token,
+          access_token: this.state.access_token
+        };
+        Meteor.call("rooms.insert", room);
+        this.setState({ newRoom: true, newRoomId: id });
+      } else {
+        this.persistRoom(track);
+      }
+    });
+  };
+
   firstSong = track => {
     if (this.state.access_token !== null && this.state.user != "") {
       Meteor.call(
@@ -187,7 +214,7 @@ class Create extends Component {
                 if (error) {
                   this.props.history.push("/");
                 } else {
-                  this.persistRoom(track)
+                  this.persistRoom(track);
                 }
               }
             );
@@ -197,7 +224,7 @@ class Create extends Component {
     }
   };
 
-  _renderCol = track => {
+  _renderCol = (track, ref, x, y) => {
     let audio = new Audio(track.preview_url);
     let pic = "";
     if (
@@ -207,14 +234,44 @@ class Create extends Component {
     ) {
       pic = track.album.images[0].url;
     }
-
     var timeoutId;
+    var playing = false;
     return (
       <div className="col-sm-3 colpic">
-        <div
+        <button
           className="pic mx-auto"
+          ref={ref}
+          autoFocus={x === 0 && y === 0}
+          onKeyDown={event => {
+            console.log(playing);
+            if (event.key == "Control") {
+              if (!playing) {
+                playing = true;
+                audio.play();
+              }
+            } else {
+              this.handleMatrix(x, y, event);
+            }
+          }}
+          onKeyUp={event => {
+            if (event.key == "Control") {
+              if (playing) {
+                playing = false;
+                audio.pause();
+              }
+            }
+          }}
           onClick={() => {
             this.firstSong(track);
+            try {
+              if (timeoutId) {
+                clearTimeout(timeoutId);
+                timeoutId = null;
+              } else {
+                audio.pause();
+                playing = false;
+              }
+            } catch (e) {}
           }}
           onMouseLeave={() => {
             if (timeoutId) {
@@ -222,6 +279,7 @@ class Create extends Component {
               timeoutId = null;
             } else {
               audio.pause();
+              playing = false;
             }
           }}
           onMouseEnter={() => {
@@ -229,6 +287,7 @@ class Create extends Component {
               timeoutId = setTimeout(function() {
                 timeoutId = null;
                 audio.play();
+                playing = true;
               }, 1000);
             }
           }}
@@ -241,17 +300,17 @@ class Create extends Component {
           <div className="row text-center">
             <div className="lblnameTrack">{track.name}</div>
           </div>
-        </div>
+        </button>
       </div>
     );
   };
-  _renderRow = row => {
+  _renderRow = (row, refs, y) => {
     return (
       <div className="row text-center">
-        {this._renderCol(row[0])}
-        {this._renderCol(row[1])}
-        {this._renderCol(row[2])}
-        {this._renderCol(row[3])}
+        {this._renderCol(row[0], refs[0], 0, y)}
+        {this._renderCol(row[1], refs[1], 1, y)}
+        {this._renderCol(row[2], refs[2], 2, y)}
+        {this._renderCol(row[3], refs[3], 3, y)}
       </div>
     );
   };
@@ -275,10 +334,15 @@ class Create extends Component {
                   <div className="row text-center">
                     <div className="col-sm-12 mx-auto">
                       <input
+                        ref={this.inPlay}
+                        autoFocus
                         type="text"
                         className="form-control createInp "
                         value={this.state.playlistName}
                         onChange={this.actualizarNombre.bind(this)}
+                        onKeyDown={event => {
+                          this.handleKey("inPlay", event);
+                        }}
                       />
                     </div>
                   </div>
@@ -286,9 +350,13 @@ class Create extends Component {
                   <div className="row text-center filaJoin">
                     {document.queryCommandSupported("copy") && (
                       <button
+                        ref={this.btnSave}
                         type="button"
                         className="btn btn-primary mx-auto btnSavePlaylist"
                         onClick={this.savePlaylistName}
+                        onKeyDown={event => {
+                          this.handleKey("btnSave", event);
+                        }}
                       >
                         Create
                       </button>
@@ -301,16 +369,47 @@ class Create extends Component {
         );
       } else {
         if (this.state.favoriteTracks.length === 16) {
+          for (let i = 0; i < 4; i++) {
+            let temp = [];
+            for (let j = 0; j < 4; j++) {
+              temp.push(React.createRef());
+            }
+            this.refMatrix.push(temp);
+          }
+
           return (
             <div className="hello">
               <div className="row text-center">
-                <h1 className="filanombre">Select your first track:</h1>
+                <h1
+                  className="filanombre"
+                  onClick={() => {
+                    this.refMatrix[0][0].current.focus();
+                  }}
+                >
+                  Select your first track:
+                </h1>
               </div>
               <div className="container">
-                {this._renderRow(this.state.favoriteTracks.slice(0, 4))}
-                {this._renderRow(this.state.favoriteTracks.slice(4, 8))}
-                {this._renderRow(this.state.favoriteTracks.slice(8, 12))}
-                {this._renderRow(this.state.favoriteTracks.slice(12, 16))}
+                {this._renderRow(
+                  this.state.favoriteTracks.slice(0, 4),
+                  this.refMatrix[0],
+                  0
+                )}
+                {this._renderRow(
+                  this.state.favoriteTracks.slice(4, 8),
+                  this.refMatrix[1],
+                  1
+                )}
+                {this._renderRow(
+                  this.state.favoriteTracks.slice(8, 12),
+                  this.refMatrix[2],
+                  2
+                )}
+                {this._renderRow(
+                  this.state.favoriteTracks.slice(12, 16),
+                  this.refMatrix[3],
+                  3
+                )}
               </div>
             </div>
           );
@@ -359,6 +458,7 @@ class Create extends Component {
             <div className="col-sm-12 mx-auto">
               <div className="row text-center mx-auto">
                 <button
+                  autoFocus
                   type="button"
                   className="btn btn-primary mx-auto btnSavePlaylist"
                   onClick={this.goToRoom}
