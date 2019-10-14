@@ -1,38 +1,27 @@
 import "/imports/api/rooms";
-
+import { Meteor } from "meteor/meteor";
 Meteor.methods({
   postContent(url, headers, details) {
-    try {
-      var result = HTTP.call("POST", url, {
-        content: details,
-        headers: headers
-      });
-      return result;
-    } catch (err) {
-      throw err;
-    }
+    var result = HTTP.call("POST", url, {
+      content: details,
+      headers: headers
+    });
+    return result;
   },
 
   getData(url, headers) {
-    try {
-      var result = HTTP.call("GET", url, {
-        headers: headers
-      });
-      return result;
-    } catch (err) {
-      throw err;
-    }
+    var result = HTTP.call("GET", url, {
+      headers: headers
+    });
+    return result;
   },
 
   postData(url, headers, data) {
-    try {
-      var result = HTTP.call("POST", url, {
-        data: data,
-        headers: headers
-      });
-      return result;
-    } catch (err) {
-      throw err;
-    }
+    /*global HTTP*/
+    var result = HTTP.call("POST", url, {
+      data: data,
+      headers: headers
+    });
+    return result;
   }
 });

@@ -18,7 +18,7 @@ export default class NotFound extends Component {
           <div className="col-sm-5 mx-auto">
             <div className="inputCol2">
               <div className="row text-center">
-                <div className="InputLbl">This room doesn't exist!</div>
+                <div className="InputLbl">This room doesn&apos;t exist!</div>
               </div>
               <div className="row text-center">
                 <div className="col-sm-3"></div>

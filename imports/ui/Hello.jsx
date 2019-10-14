@@ -142,7 +142,7 @@ export default class Hello extends Component {
             <div className="col-sm-5 mx-auto">
               <div className="inputCol2">
                 <div className="row text-center">
-                  <div className="InputLbl">Enter the room's ID:</div>
+                  <div className="InputLbl">Enter the room&apos;s ID:</div>
                 </div>
                 <div className="row text-center">
                   <div className="col-sm-12 mx-auto">
